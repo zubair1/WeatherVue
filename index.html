@@ -34,10 +34,6 @@
 					<div class="col-3">
 						<nav class="mt-2 text-right">
 							<router-link to="/" class="btn btn-primary btn-sm">Home</router-link>
-							<router-link to="/search" class="btn btn-link btn-sm">Search</router-link>
-
-							<router-link to="/foo" class="btn btn-link btn-sm">/foo</router-link>
-							<router-link to="/bar" class="btn btn-link btn-sm">/bar</router-link>
 						</nav>
 					</div>
 				</div>
@@ -46,10 +42,10 @@
 
 				<div class="row mt-3">
 					<div class="col-12">
-						<form class="" action="index.html#search" method="post">
+						<form @submit.prevent="submitSearch">
 							<div class="row form-group">
 								<div class="col-10">
-									<input type="text" class="form-control form-control-lg" name="keyword" value="" placeholder="Search for your city.. i.e: Dublin" />
+									<input type="text" class="form-control form-control-lg" name="txtKeyword" value="" placeholder="Search for your city.. i.e: Dublin" v-model="txtKeyword" />
 								</div>
 								<div class="col-2">
 									<button type="submit" class="btn btn-block btn-lg btn-secondary" name="action" value="search">Search</button>

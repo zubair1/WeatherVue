@@ -1,6 +1,6 @@
 
 Vue.component('weather-icon', {
-	props: [ 'asd', 'size' ],
+	props: [ 'name', 'size' ],
 	data: function() {
 		return {
 			base: 'https://www.metaweather.com/static/img/weather/',
@@ -8,9 +8,9 @@ Vue.component('weather-icon', {
 		}
 	},
 	mounted: function () {
-		this.file = this.asd;
+		this.file = this.name;
 	},
-	template: `<img :src="base + asd + '.svg'" :width="size">`
+	template: `<img :src="base + name + '.svg'" :width="size">`
 });
 
 Vue.component('weather', {
@@ -32,8 +32,25 @@ Vue.component('weather', {
 		}
 	},
 	computed: {
+		boxCursorStyle: function() {
+			if (typeof(this.alldates) != 'undefined' && this.alldates === true)
+			{
+				// if we are on the single page already, don't show a ppinter cursor
+				return { cursor: 'default' }
+			}
+			return { cursor: 'pointer' }
+		}
 	},
 	methods: {
+		gotoDetails: function(){
+			if (typeof(this.alldates) != 'undefined' && this.alldates === true)
+			{
+				// if we are on the single page already, do nothing..
+				return false;
+			} else {
+				router.replace('/weather/'+this.woeid);
+			}
+		},
 		getDay: function(date){
 			var weekday = new Array(7);
 				weekday[0] =  "Sunday";
@@ -59,13 +76,12 @@ Vue.component('weather', {
 				if(response.status == "200")
 				{
 					self.detail.city = response.body.title;
-					if (typeof(this.alldates) != 'undefined' && this.alldates == true)
+					if (typeof(this.alldates) != 'undefined' && this.alldates === true)
 					{
 						self.detail.temp = response.body.consolidated_weather;
 					} else {
 						self.detail.temp = response.body.consolidated_weather[0]; // The first item has data for today
 					}
-					console.log(self.detail.temp);
 					this.loaded = true;
 				}
 
@@ -89,7 +105,7 @@ Vue.component('weather', {
 		<div class="col-12 col-sm-4 mt-3" v-if="loaded">
 			<div class="row">
 				<div class="col">
-					<div class="border">
+					<div class="border" :style=[boxCursorStyle] v-on:click="gotoDetails">
 						<div class="row mt-1 mb-1 ml-1 mr-1 border-bottom">
 							<div class="col-9">
 								<h3>{{ detail.city }}</h3>
@@ -99,17 +115,7 @@ Vue.component('weather', {
 							</div>
 						</div>
 
-						<div class="row mt-3 mb-3 ml-1 mr-1" v-if="alldates == false">
-							<div class="col-8 small">
-								<div><b>Temp: {{ detail.temp.the_temp }}</b></div>
-								<div>Min Temp: {{ detail.temp.min_temp }}</div>
-								<div>Max Temp: {{ detail.temp.max_temp }}</div>
-							</div>
-							<div class="col">
-								<weather-icon :asd="detail.temp.weather_state_abbr" size="90%"></weather-icon>
-							</div>
-						</div>
-						<div class="row mt-3 mb-3 ml-1 mr-1" v-else>
+						<div class="row mt-3 mb-3 ml-1 mr-1" v-if="alldates">
 							<div class="col-12 small">
 								<div class="border mb-2" v-for="item in detail.temp" v-bind:key="item.woeid" v-bind:woeid="item.woeid">
 									<div class="row">
@@ -127,10 +133,21 @@ Vue.component('weather', {
 											</div>
 										</div>
 										<div class="col-3">
-											<weather-icon :asd="item.weather_state_abbr" size="90%"></weather-icon>
+											<weather-icon :name="item.weather_state_abbr" size="90%"></weather-icon>
 										</div>
 									</div>
 								</div>
+							</div>
+						</div>
+
+						<div class="row mt-3 mb-3 ml-1 mr-1" v-else>
+							<div class="col-8 small">
+								<div><b>Temp: {{ detail.temp.the_temp }}</b></div>
+								<div>Min Temp: {{ detail.temp.min_temp }}</div>
+								<div>Max Temp: {{ detail.temp.max_temp }}</div>
+							</div>
+							<div class="col">
+								<weather-icon :name="detail.temp.weather_state_abbr" size="90%"></weather-icon>
 							</div>
 						</div>
 					</div>
@@ -159,7 +176,7 @@ const Home = {
 			return [
 				{"title":"Istanbul", "woeid":2344116},
 				{"title":"Berlin", "woeid":638242},
-				{"title":"London", "woeid":1111144418},
+				{"title":"London", "woeid":44418},
 				{"title":"Helsinki", "woeid":565346},
 				{"title":"Dublin", "woeid":560743},
 				{"title":"Vancouver", "woeid":9807}
@@ -189,6 +206,14 @@ const Search = {
 		}
 	},
 	methods: {
+		submitSearch: function() {
+			if (this.txtKeyword.length > 0)
+			{
+				router.replace('/search/'+this.txtKeyword, function(){
+					this.doSearch();
+				});
+			}
+		},
 		doSearch: function() {
 			var self = this;
 			this.$http.get('http://www.zubair.info/weather.php?command=search&keyword='+self.keyword).then(function(response)
@@ -220,6 +245,10 @@ const Search = {
 			});
 		}
 	},
+	watch: {
+		// Call again if the route changes
+		'$route': 'doSearch'
+	},
 	mounted: function() {
 		this.doSearch();
 	},
@@ -238,16 +267,18 @@ const Search = {
 							v-bind:woeid="city.woeid"
 						></weather>
 				</div>
+				<div class="row" v-else>
+					<div class="col">
+						Searching..
+					</div>
+				</div>
+
 				<div class="row" v-if="error">
 					<div class="col">
 						<div class="alert alert-danger">{{ error }}</div>
 					</div>
 				</div>
-				<div class="row" v-else>
-					<div class="col">
-						Loading..
-					</div>
-				</div>
+
 			</div>
 		</div>
 	`
@@ -305,8 +336,6 @@ const WeatherSingePage = {
 var router = new VueRouter({
 	routes: [
 		{ path: '/', component: Home },
-		{ path: '/foo', component: Foo },
-		{ path: '/bar', component: Bar },
 		{ path: '/search', component: Search },
 		{
 			path: '/search/:keyword',
@@ -324,8 +353,15 @@ var router = new VueRouter({
 const app = new Vue({
 	el: '#app',
 	data: {
+		txtKeyword: ''
 	},
 	methods: {
+		submitSearch: function() {
+			if (this.txtKeyword.length > 0)
+			{
+				router.replace('/search/'+this.txtKeyword);
+			}
+		}
 	},
 	router: router,
 	/*template: `
@@ -358,5 +394,3 @@ const app = new Vue({
 				</div>
 	`*/
 });
-
-//app.todos.push({ text: 'New item' });
