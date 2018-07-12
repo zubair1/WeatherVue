@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+
+	<link rel="stylesheet" href="css/app.css">
+
+	<title>Weather App</title>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue@2.5.16/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue-resource@1.5.1"></script>
+</head>
+
+<body>
+
+	<div class="container" id="app">
+		<div class="row mb-5 mt-3">
+			<div class="col">
+
+				<div class="row">
+					<div class="col-9">
+						<h2><b>Today's Weather</b></h2>
+					</div>
+					<div class="col-3">
+						<nav class="mt-2 text-right">
+							<router-link to="/" class="btn btn-primary btn-sm">Home</router-link>
+							<router-link to="/search" class="btn btn-link btn-sm">Search</router-link>
+
+							<router-link to="/foo" class="btn btn-link btn-sm">/foo</router-link>
+							<router-link to="/bar" class="btn btn-link btn-sm">/bar</router-link>
+						</nav>
+					</div>
+				</div>
+
+				<hr>
+
+				<div class="row mt-3">
+					<div class="col-12">
+						<form class="" action="index.html#search" method="post">
+							<div class="row form-group">
+								<div class="col-10">
+									<input type="text" class="form-control form-control-lg" name="keyword" value="" placeholder="Search for your city.. i.e: Dublin" />
+								</div>
+								<div class="col-2">
+									<button type="submit" class="btn btn-block btn-lg btn-secondary" name="action" value="search">Search</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				<hr>
+
+				<router-view class="view"></router-view>
+
+			</div>
+		</div>
+	</div><!-- /#app -->
+
+	<!-- PAGE SCRIPTS -->
+	<script src="js/app.js"></script>
+</body>
+</html>

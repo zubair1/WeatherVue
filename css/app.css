@@ -1,0 +1,10 @@
+	body {
+		background-color: #FFFFFF;
+	}
+
+	.meter-holder {
+		height: 100%;
+		padding: 10px 0;
+		background: #FFFFFF;
+		border: 1px solid #FF0000;
+	}
